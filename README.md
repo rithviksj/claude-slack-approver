@@ -430,10 +430,4 @@ Contributions welcome! Please:
 
 ---
 
-**Made with ❤️ and PERSEVERANCE by [Rithvik Javgal](https://github.com/rithviksj)**
-
-*"We do not give up - we fight till it's done!"* 🚀
-
----
-
 **Never miss a Claude approval again!** ⚡
