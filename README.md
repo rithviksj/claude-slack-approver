@@ -81,12 +81,24 @@ This monitor:
 - `iterm-key-sender` (keyboard event simulation for iTerm2)
 
 ### Slack Workspace
-- Slack workspace with bot token
-- Bot scopes required:
-  - `chat:write` - Send messages
-  - `chat:write:user` - Send as user
-  - `im:history` - Read DM history
-  - `im:read` - Access DMs
+- Slack workspace with **user token** (xoxp-...)
+- **Required scopes** (minimum for core functionality):
+  - `chat:write` - Send messages to channels/DMs
+  - `im:read` - View DM channels list
+  - `im:history` - Read DM message history
+
+**Optional but recommended scopes:**
+  - `users:read` - View user information
+  - `channels:read` - View public channels
+  - `groups:read` - View private channels
+
+**How to get your token:**
+1. Go to https://api.slack.com/apps
+2. Create a new app or select existing app
+3. Navigate to **OAuth & Permissions**
+4. Add the scopes listed above under **User Token Scopes**
+5. Install/Reinstall app to workspace
+6. Copy the **User OAuth Token** (starts with `xoxp-`)
 
 ---
 
@@ -325,12 +337,22 @@ osascript -e 'tell application "iTerm" to get tty of current session of current 
 
 ### Slack notifications not sending
 ```bash
-# Test Slack API manually
+# Verify token authentication
+source ~/.mcp/slack-credentials.env
+curl -X POST https://slack.com/api/auth.test \
+  -H "Authorization: Bearer $SLACK_GLOBAL_TOKEN" | python3 -m json.tool
+
+# Test sending a message
 curl -X POST https://slack.com/api/chat.postMessage \
   -H "Authorization: Bearer $SLACK_GLOBAL_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"channel":"@your-username","text":"Test"}'
 ```
+
+**Common issues:**
+- **Wrong token type**: Must be a **user token** (xoxp-...), not a bot token (xoxb-...)
+- **Missing scopes**: Verify you have `chat:write`, `im:read`, and `im:history` scopes
+- **Token expired**: Regenerate token from https://api.slack.com/apps
 
 ### Finding 0 messages when polling
 - Check `oldest` parameter in `conversations.history` API call
