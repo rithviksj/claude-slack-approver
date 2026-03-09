@@ -304,10 +304,49 @@ claude-slack-approver/
 ├── detect-prompt-type.sh       # Prompt format detection (2 vs 3 options)
 ├── start.sh                    # Start monitor
 ├── stop.sh                     # Stop monitor
+├── health-check.sh             # Quick health check
+├── test-notification.sh        # Test Slack notifications
+├── watchdog.sh                 # Auto-restart on crash
+├── daily-check.sh              # Paranoid-level daily check
+├── com.user.claude-slack-approver.plist  # LaunchAgent for auto-start
 ├── README.md                   # This file
+├── MONITORING.md               # Monitoring & guardrails guide
 ├── LICENSE                     # MIT License
 └── .gitignore                  # Git ignore rules
 ```
+
+---
+
+## 🛡️ Monitoring & Guardrails
+
+**Critical:** The monitor must be running 24/7 to catch approval prompts. See [MONITORING.md](MONITORING.md) for comprehensive monitoring setup.
+
+### Quick Daily Check
+```bash
+./health-check.sh
+```
+
+### Guardrails (4 Layers)
+1. **LaunchAgent** - Auto-restart on crash, runs at login
+2. **Watchdog Cron** - Checks every 5 minutes, restarts if down
+3. **Daily Health Check** - Comprehensive system report
+4. **Test Notification** - Weekly Slack verification
+
+### Paranoid-Level Setup
+```bash
+# 1. Install LaunchAgent (edit paths first)
+cp com.user.claude-slack-approver.plist ~/Library/LaunchAgents/
+launchctl load ~/Library/LaunchAgents/com.user.claude-slack-approver.plist
+
+# 2. Add watchdog cron (every 5 minutes)
+crontab -e
+# Add: */5 * * * * /path/to/watchdog.sh
+
+# 3. Add daily check (every morning at 9 AM)
+# Add: 0 9 * * * /path/to/daily-check.sh
+```
+
+**See [MONITORING.md](MONITORING.md) for full documentation.**
 
 ---
 
